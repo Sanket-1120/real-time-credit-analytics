@@ -1,0 +1,25 @@
+# In your .gitignore file
+
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+SAYA/
+
+# Node.js
+/frontend/node_modules/
+/frontend/dist/
+.npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# VS Code
+.vscode/
