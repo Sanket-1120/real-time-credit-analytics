@@ -1,63 +1,76 @@
 # In: backend/scoring_engine.py
 
 import pandas as pd
+import joblib
+import shap
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-# The function now takes the ticker as an argument
-def engineer_features(ticker: str, market_data: list, news_data: list, filings_data: list) -> dict:
-    """
-    Takes raw data and engineers a set of features for scoring.
-    """
-    features = {}
+try:
+    model = joblib.load('credit_model.pkl')
+    explainer = shap.TreeExplainer(model)
+    MODEL_FEATURES = model.feature_names_in_
+    print("✅ Model and SHAP explainer loaded successfully.")
+    print(f"Model expects features: {MODEL_FEATURES}")
+except Exception as e:
+    model = None
+    explainer = None
+    MODEL_FEATURES = []
+    print(f"❌ Model loading failed: {e}. Scoring will be disabled.")
 
-    if market_data:
-        market_df = pd.DataFrame(market_data)
-        # --- THIS IS THE FIX ---
-        # It now uses the provided ticker to find the correct column name dynamically
-        close_column_name = f'Close_{ticker.upper()}'
-        
-        if close_column_name in market_df.columns:
-            market_df['Close_'] = pd.to_numeric(market_df[close_column_name])
-            features['volatility_30d'] = market_df['Close_'].pct_change().rolling(window=30).std().iloc[-1]
-            
-            price_90d_ma = market_df['Close_'].rolling(window=90).mean().iloc[-1]
-            current_price = market_df['Close_'].iloc[-1]
-            features['trend_90d'] = current_price / price_90d_ma
-        else:
-            print(f"Warning: Column '{close_column_name}' not found in market data.")
+
+def engineer_features(ticker: str, market_data: list, news_data: list, macro_data: dict) -> pd.DataFrame:
+    latest_market_data = pd.DataFrame(market_data).iloc[-1]
+    
+    features = {
+        'Open': latest_market_data.get(f'Open_{ticker.upper()}'),
+        'High': latest_market_data.get(f'High_{ticker.upper()}'),
+        'Low': latest_market_data.get(f'Low_{ticker.upper()}'),
+        'Close': latest_market_data.get(f'Close_{ticker.upper()}'),
+        'Volume': latest_market_data.get(f'Volume_{ticker.upper()}'),
+    }
 
     if news_data:
-        features['news_volume_7d'] = len(news_data)
-
-    if filings_data:
-        features['filings_count_90d'] = len(filings_data)
-
-    return features
-
-
-def calculate_credit_score(features: dict) -> dict:
-    """
-    Calculates a credit score based on a dictionary of engineered features.
-    Score is on a scale of 0-100 (100 is best).
-    """
-    score = 100
-    explanation = []
-
-    volatility = features.get('volatility_30d', 0)
-    if volatility > 0.03:
-        score -= 25
-        explanation.append(f"High 30-day volatility ({volatility:.2f}) indicates increased market risk.")
-    elif volatility > 0.015:
-        score -= 10
-        explanation.append(f"Moderate 30-day volatility ({volatility:.2f}) suggests some market uncertainty.")
-
-    trend = features.get('trend_90d', 1)
-    if trend < 0.9:
-        score -= 20
-        explanation.append(f"Stock is in a significant downtrend (trading at {trend:.2f} of its 90-day average).")
-
-    news_volume = features.get('news_volume_7d', 0)
-    if news_volume > 15:
-        score -= 5
-        explanation.append(f"High volume of recent news ({news_volume}) suggests a major ongoing event.")
+        news_df = pd.DataFrame(news_data)
+        analyzer = SentimentIntensityAnalyzer()
         
-    return {"score": max(0, score), "explanation": explanation}
+        NEGATIVE_KEYWORDS = ['layoffs', 'debt', 'downgrade', 'lawsuit', 'investigation', 'recall', 'outage', 'cuts', 'fine']
+        POSITIVE_KEYWORDS = ['expansion', 'profit', 'upgrade', 'hiring', 'record', 'partnership', 'launch', 'beats', 'growth']
+
+        news_df['sentiment'] = news_df['title'].apply(lambda x: analyzer.polarity_scores(x)['compound'])
+        features['sentiment'] = news_df['sentiment'].mean()
+        features['positive_events'] = sum(1 for title in news_df['title'] if any(kw in title.lower() for kw in POSITIVE_KEYWORDS))
+        features['negative_events'] = sum(1 for title in news_df['title'] if any(kw in title.lower() for kw in NEGATIVE_KEYWORDS))
+
+    if macro_data:
+        features.update(macro_data)
+        
+    features_df = pd.DataFrame([features])
+    
+    for col in MODEL_FEATURES:
+        if col not in features_df.columns:
+            features_df[col] = 0
+            
+    return features_df[MODEL_FEATURES]
+
+
+def calculate_credit_score(features_df: pd.DataFrame) -> dict:
+    if model is None or features_df.empty:
+        return {"score": -1, "explanation": "Model not loaded or features missing."}
+
+    predicted_value = model.predict(features_df)[0]
+    
+    score = 50 + (predicted_value * 2000)
+    score = max(0, min(100, score))
+    
+    shap_values = explainer.shap_values(features_df)
+    
+    feature_names = features_df.columns
+    contributions = {name: round(val, 5) for name, val in zip(feature_names, shap_values[0])}
+    
+    explanation = {
+        "base_value": round(explainer.expected_value[0], 5),
+        "prediction": round(predicted_value, 5),
+        "contributions": contributions
+    }
+    
+    return {"score": int(score), "explanation": explanation}
