@@ -54,7 +54,7 @@ This platform is a real-time, explainable credit intelligence system designed to
 
 *
 
-![System Architecture Diagram](./assets/architecture.png)
+![System Architecture Diagram](https://github.com/Sanket-1120/real-time-credit-analytics/blob/3b506287320f40af5a1e28c4e699013c3245dbe5/assets/Project_architecture.jpg)
 
 ### Data Flow
 ```
@@ -79,13 +79,11 @@ External APIs      [Ingestion Scripts]      [Supabase DB]      [FastAPI Backend]
 
 Our most critical strategic decision was the choice of the machine learning model. We considered a high-performance but complex **LightGBM + SHAP** model versus an inherently transparent **Decision Tree**.
 
-We chose the **Decision Tree**. For a hackathon focused on **explainability**, a model that is transparent by design is superior to one that requires a post-hoc approximation for explanations. We consciously traded a potential small increase in predictive accuracy for a massive gain in development speed, reliability, and true, native explainability, which we believe is the core spirit of this challenge.
+We chose the **Random Forest and LightGBM**. For a hackathon focused on **explainability**, a model that is transparent by design is superior to one that requires a post-hoc approximation for explanations. We consciously traded a potential small increase in predictive accuracy for a massive gain in development speed, reliability, and true, native explainability, which we believe is the core spirit of this challenge.
 
 ---
 
 ## ⚙️ Running the Project Locally
-
-*[This section provides clear setup instructions. You can fill this in with more detail if needed.]*
 
 ### Prerequisites
 * Python 3.11+
@@ -116,3 +114,4 @@ npm run dev
 * **Automated Retraining Pipeline:** Use GitHub Actions to automatically retrain and deploy the model on a weekly basis.
 * **Advanced NLP for Event Detection:** Move beyond sentiment to classify specific events (e.g., M&A, debt restructuring, executive changes).
 * **Alternative Datasets:** Integrate satellite imagery or trade flow data to capture non-traditional risk signals.
+
