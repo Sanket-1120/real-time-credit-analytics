@@ -64,9 +64,8 @@ This project integrates several external APIs to gather a rich, multi-faceted da
 
 ## 🏗️ System Architecture & Technology Rationale
 
-*[Create a simple diagram using a tool like [Excalidraw](https://excalidraw.com/) and add the image to your repository in the `assets` folder.]*
 
-![System Architecture Diagram](./assets/architecture.png)
+![System Architecture Diagram](https://github.com/Sanket-1120/real-time-credit-analytics/blob/3b506287320f40af5a1e28c4e699013c3245dbe5/assets/Project_architecture.jpg)
 
 ### Data Flow
 ```
@@ -158,3 +157,4 @@ npm run dev
 * **Automated Retraining Pipeline:** Use GitHub Actions to automatically retrain and deploy the model on a weekly basis.
 * **Advanced NLP for Event Detection:** Move beyond sentiment to classify specific events (e.g., M&A, debt restructuring, executive changes).
 * **Alternative Datasets:** Integrate satellite imagery or trade flow data to capture non-traditional risk signals.
+
