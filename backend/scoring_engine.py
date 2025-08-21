@@ -19,7 +19,11 @@ except Exception as e:
 
 
 def engineer_features(ticker: str, market_data: list, news_data: list, macro_data: dict) -> pd.DataFrame:
-    latest_market_data = pd.DataFrame(market_data).iloc[-1]
+    """
+    Engineers features for a LIVE request, ensuring they match the training data format.
+    """
+    market_df = pd.DataFrame(market_data)
+    latest_market_data = market_df.iloc[-1]
     
     features = {
         'Open': latest_market_data.get(f'Open_{ticker.upper()}'),
@@ -28,6 +32,17 @@ def engineer_features(ticker: str, market_data: list, news_data: list, macro_dat
         'Close': latest_market_data.get(f'Close_{ticker.upper()}'),
         'Volume': latest_market_data.get(f'Volume_{ticker.upper()}'),
     }
+
+    # --- NEW: TREND INDICATOR LOGIC ---
+    close_col = f'Close_{ticker.upper()}'
+    if close_col in market_df.columns:
+        market_df[close_col] = pd.to_numeric(market_df[close_col])
+        # Short-term vs Long-term moving average
+        ma_short = market_df[close_col].rolling(window=30).mean().iloc[-1]
+        ma_long = market_df[close_col].rolling(window=90).mean().iloc[-1]
+        # Avoid division by zero
+        features['trend_indicator'] = ma_short / ma_long if ma_long > 0 else 1
+    # ------------------------------------
 
     if news_data:
         news_df = pd.DataFrame(news_data)
@@ -46,6 +61,7 @@ def engineer_features(ticker: str, market_data: list, news_data: list, macro_dat
         
     features_df = pd.DataFrame([features])
     
+    # Ensure all required columns exist and are in the correct order
     for col in MODEL_FEATURES:
         if col not in features_df.columns:
             features_df[col] = 0
