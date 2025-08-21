@@ -64,8 +64,9 @@ This project integrates several external APIs to gather a rich, multi-faceted da
 
 ## 🏗️ System Architecture & Technology Rationale
 
+*[Create a simple diagram using a tool like [Excalidraw](https://excalidraw.com/) and add the image to your repository in the `assets` folder.]*
 
-![System Architecture Diagram](https://github.com/Sanket-1120/real-time-credit-analytics/blob/3b506287320f40af5a1e28c4e699013c3245dbe5/assets/Project_architecture.jpg)
+![System Architecture Diagram](./assets/architecture.png)
 
 ### Data Flow
 ```
@@ -87,10 +88,14 @@ External APIs      [Ingestion Scripts]      [Supabase DB]      [FastAPI Backend]
 ---
 
 ## 🎯 Key Design Tradeoffs
+Our most critical strategic decision was the choice of the machine learning model. We considered both a Random Forest and a high-performance LightGBM model.
 
-Our most critical strategic decision was the choice of the machine learning model. We considered a high-performance but complex **LightGBM + SHAP** model.
+To make an informed decision, we trained both models on the same historical dataset and evaluated their performance using Mean Squared Error (MSE), where lower is better.
 
-We chose the **Random Forest & LightGBM**. For a hackathon focused on **explainability**, a model that is transparent by design is superior to one that requires a post-hoc approximation for explanations. We consciously traded a potential small increase in predictive accuracy for a massive gain in development speed, reliability, and true, native explainability, which we believe is the core spirit of this challenge.
+* **Random Forest MSE:** 0.000920
+* **LightGBM MSE:** 0.000993
+
+The Random Forest model performed slightly better on our specific dataset. For a hackathon focused on explainability and robustness, a model that is both accurate and reliable is superior. We consciously traded a potential small increase in training speed for better predictive accuracy and native explainability with SHAP, which we believe aligns perfectly with the core spirit of this challenge.
 
 ---
 
@@ -99,21 +104,49 @@ We chose the **Random Forest & LightGBM**. For a hackathon focused on **explaina
 ### Prerequisites
 * Python 3.11+
 * Node.js and npm
-* Git & Docker
+* Git
+* Docker Desktop
 
-### 1. Backend Setup
+### 1. Setup
 ```bash
-# Clone, create venv, and install requirements
-pip install -r requirements.txt
-# Set up your .env file
-# Run the server
-uvicorn api:app --reload
+# Clone the repository
+git clone [https://github.com/Sanket-1120/real-time-credit-analytics.git](https://github.com/Sanket-1120/real-time-credit-analytics.git)
+cd real-time-credit-analytics
+
+# Create a .env file in the root directory and add your secret keys
+# (DB credentials, API keys, etc.)
+cp .env.example .env
+# Now, edit the .env file with your actual keys
 ```
-
-### 2. Frontend Setup
+### 2. Run with Docker (Recommended)
+This is the simplest way to run the entire application.
 ```bash
-# Navigate to the dashboard directory
-cd dashboard
+# Build and start all services
+docker-compose up --build
+```
+The backend will be available at `http://localhost:8000`.
+
+The frontend will be available at `http://localhost:3000`.
+
+### 3. Manual Setup
+**Backend (Terminal 1)**
+```bash
+# Create a Python virtual environment
+python -m venv venv
+# On Windows use venv\Scripts\activate
+source venv/bin/activate 
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the server
+uvicorn backend.main:app --reload
+```
+**Frontend (Terminal 2)**
+```bash
+# Navigate to the frontend directory
+cd frontend
+
 # Install dependencies and run
 npm install
 npm run dev
