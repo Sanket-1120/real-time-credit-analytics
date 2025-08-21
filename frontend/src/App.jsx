@@ -64,6 +64,8 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // In App.jsx, replace your fetchData function with this one
+
   const fetchData = useCallback(async (tickers) => {
     if (!tickers) { setError('Please enter at least one ticker.'); return; }
     setLoading(true);
@@ -71,11 +73,16 @@ function App() {
     
     const tickerList = tickers.split(',').map(t => t.trim().toUpperCase());
     const primaryTicker = tickerList[0];
+    const backendUrl = 'https://real-time-credit-analytics.onrender.com';
 
     try {
-      const dataResponse = await axios.get(`http://127.0.0.1:8000/data/${primaryTicker}`);
+      // --- THIS IS THE FIX ---
+      // Added the missing '/data/' to the URL path
+      const dataResponse = await axios.get(`${backendUrl}/data/${primaryTicker}`);
+      // -----------------------
+      
       setData(dataResponse.data);
-      const historyResponse = await axios.get(`http://127.0.0.1:8000/history/${tickers}`);
+      const historyResponse = await axios.get(`${backendUrl}/history/${tickers}`);
       setHistory(historyResponse.data);
     } catch (err) {
       setError('Failed to fetch data. Check tickers and backend.');
