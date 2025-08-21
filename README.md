@@ -18,7 +18,7 @@
 
 ## 📜 The Problem: The Lagging & Opaque Nature of Credit Ratings
 
-In global credit markets, perceptions of creditworthiness drive the flow of billions of dollars. However, these perceptions are largely shaped by traditional credit ratings that suffer from critical flaws: they are updated infrequently, based on opaque methodologies, and often lag behind significant real-world events. This information gap creates market inefficiencies and mispriced risk. In an era of abundant, high-frequency data, there is a clear opportunity to leverage AI for a more dynamic, transparent, and evidence-backed assessment of creditworthiness.
+Traditional credit ratings are the bedrock of financial markets, yet they suffer from critical flaws: they are updated infrequently, based on opaque methodologies, and often lag behind significant real-world events. This information gap creates market inefficiencies and mispriced risk. In an era of abundant, high-frequency data, there is a clear opportunity to leverage AI for a more dynamic, transparent, and evidence-backed assessment of creditworthiness.
 
 ## 💡 Our Solution: A Transparent, Real-Time Platform
 
@@ -50,9 +50,20 @@ This platform is a real-time, explainable credit intelligence system designed to
 
 ---
 
+## 🌐 APIs & Data Sources
+
+This project integrates several external APIs to gather a rich, multi-faceted dataset.
+
+| API / Data Source | Data Provided | Integration Method |
+| :--- | :--- | :--- |
+| **Yahoo Finance** | Daily stock market data (OHLC, Volume) for listed companies. | `yfinance` Python library |
+| **FRED** | Key U.S. macroeconomic indicators (e.g., Treasury rates, CPI). | `fredapi` Python library |
+| **NewsAPI** | Real-time news headlines for companies and market events. | Python `requests` library |
+
+---
+
 ## 🏗️ System Architecture & Technology Rationale
 
-*
 
 ![System Architecture Diagram](https://github.com/Sanket-1120/real-time-credit-analytics/blob/3b506287320f40af5a1e28c4e699013c3245dbe5/assets/Project_architecture.jpg)
 
@@ -77,9 +88,9 @@ External APIs      [Ingestion Scripts]      [Supabase DB]      [FastAPI Backend]
 
 ## 🎯 Key Design Tradeoffs
 
-Our most critical strategic decision was the choice of the machine learning model. We considered a high-performance but complex **LightGBM + SHAP** model versus an inherently transparent **Decision Tree**.
+Our most critical strategic decision was the choice of the machine learning model. We considered a high-performance but complex **LightGBM + SHAP** model.
 
-We chose the **Random Forest and LightGBM**. For a hackathon focused on **explainability**, a model that is transparent by design is superior to one that requires a post-hoc approximation for explanations. We consciously traded a potential small increase in predictive accuracy for a massive gain in development speed, reliability, and true, native explainability, which we believe is the core spirit of this challenge.
+We chose the **Random Forest & LightGBM**. For a hackathon focused on **explainability**, a model that is transparent by design is superior to one that requires a post-hoc approximation for explanations. We consciously traded a potential small increase in predictive accuracy for a massive gain in development speed, reliability, and true, native explainability, which we believe is the core spirit of this challenge.
 
 ---
 
@@ -114,4 +125,3 @@ npm run dev
 * **Automated Retraining Pipeline:** Use GitHub Actions to automatically retrain and deploy the model on a weekly basis.
 * **Advanced NLP for Event Detection:** Move beyond sentiment to classify specific events (e.g., M&A, debt restructuring, executive changes).
 * **Alternative Datasets:** Integrate satellite imagery or trade flow data to capture non-traditional risk signals.
-
