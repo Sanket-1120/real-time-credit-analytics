@@ -31,6 +31,7 @@ app = FastAPI(
 origins = [
     "http://localhost:5173",
     "http://localhost:5174",
+    "https://real-time-credit-analytics-1.onrender.com", 
 ]
 
 app.add_middleware(
