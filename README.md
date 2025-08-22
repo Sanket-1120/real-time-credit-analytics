@@ -11,8 +11,8 @@
 
 ## 🚀 Live Demo & Walkthrough
 
-* **Live Application URL:** `[(https://real-time-credit-analytics-1.onrender.com/)]`
-* **Video Walkthrough:** `[(https://youtu.be/fJqxUBaN1kc/)]`
+* **Live Application URL:** `[(https://real-time-credit-analytics-1.onrender.com)]`
+* **Video Walkthrough:** `[(https://youtu.be/fJqxUBaN1kc)]`
 
 ---
 
@@ -157,6 +157,7 @@ npm run dev
 * **Automated Retraining Pipeline:** Use GitHub Actions to automatically retrain and deploy the model on a weekly basis.
 * **Advanced NLP for Event Detection:** Move beyond sentiment to classify specific events (e.g., M&A, debt restructuring, executive changes).
 * **Alternative Datasets:** Integrate satellite imagery or trade flow data to capture non-traditional risk signals.
+
 
 
 
