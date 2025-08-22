@@ -11,8 +11,8 @@
 
 ## 🚀 Live Demo & Walkthrough
 
-* **Live Application URL:** `[Link to your deployed frontend on Vercel/Netlify]`
-* **Video Walkthrough:** `[Link to your 5-7 minute video demo on YouTube/Loom]`
+* **Live Application URL:** `[(https://real-time-credit-analytics-1.onrender.com)]`
+* **Video Walkthrough:** `[(https://youtu.be/fJqxUBaN1kc)]`
 
 ---
 
@@ -157,4 +157,5 @@ npm run dev
 * **Automated Retraining Pipeline:** Use GitHub Actions to automatically retrain and deploy the model on a weekly basis.
 * **Advanced NLP for Event Detection:** Move beyond sentiment to classify specific events (e.g., M&A, debt restructuring, executive changes).
 * **Alternative Datasets:** Integrate satellite imagery or trade flow data to capture non-traditional risk signals.
+
 
